@@ -1,0 +1,25 @@
+{
+    "version": 1,
+    "projects": {
+      "frontend": {
+        "root": "apps/frontend",
+        "sourceRoot": "apps/frontend/src",
+        "projectType": "application",
+        "architect": {
+          "build": {
+            "builder": "@nrwl/next:build",
+            "options": {
+              "outputPath": "dist/apps/frontend"
+            }
+          },
+          "serve": {
+            "builder": "@nrwl/next:dev-server",
+            "options": {
+              "browserTarget": "frontend:build"
+            }
+          }
+        }
+      }
+    }
+  }
+  

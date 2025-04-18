@@ -1,0 +1,28 @@
+{
+    "name": "frontend",
+    "projectType": "application",
+    "root": "apps/frontend",
+    "sourceRoot": "apps/frontend/src",
+    "targets": {
+      "build": {
+        "executor": "@nx/next:build",
+        "options": {
+          "outputPath": "dist/apps/frontend"
+        }
+      },
+      "serve": {
+        "executor": "@nx/next:server",
+        "options": {
+          "buildTarget": "frontend:build"
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "options": {
+          "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
+        }
+      }
+    },
+    "tags": []
+  }
+  
