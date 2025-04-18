@@ -3,7 +3,10 @@ import "react-quill/dist/quill.snow.css";
 import { Input, Button, Typography, Form, message, Card } from "antd";
 import dynamic from 'next/dynamic';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+    ssr: false, 
+    loading: () => <p>Loading editor...</p>,
+});
 const { Title } = Typography;
 
 function CreateCampaign() {
