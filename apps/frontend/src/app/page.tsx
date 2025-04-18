@@ -1,3 +1,5 @@
+// import CampaignDetail from "@/components/CampaignDetail";
+
 export default function Index() {
   /*
    * Replace the elements below with your own.
@@ -6,6 +8,7 @@ export default function Index() {
    */
   return (
     <div>
+      {/* <CampaignDetail /> */}
       <div className="wrapper">
         <div className="container">
           <div id="welcome">
