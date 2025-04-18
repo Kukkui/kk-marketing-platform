@@ -9,7 +9,7 @@ const SideBarMenu = (props: {
     const { onClick, items } = props
     return (
         <div style={{ 
-            width: 256, 
+            width: '100%', 
             height: '100vh', 
             overflowY: 'auto', 
             backgroundColor: '#001529', 
@@ -20,8 +20,8 @@ const SideBarMenu = (props: {
             <div style={{ padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: 'clamp(10px, 10vw, 150px)', // Responsive width
+                  height: 'clamp(10px, 10vw, 150px)', // Responsive height
                   borderRadius: '50%',
                   backgroundColor: 'white',
                   display: 'flex',

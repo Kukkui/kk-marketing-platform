@@ -23,7 +23,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 const items: MenuItem[] = [
   {
     key: 'campaign',
-    label: 'Capaign',
+    label: 'Campaign',
     icon: <AppstoreOutlined />,
     children: [
       { key: 'campaign_list', icon: <DesktopOutlined />, label: 'Campaign Lists' },
@@ -77,7 +77,13 @@ const App: React.FC = () => {
 
   return (
     <>
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '20% 80%', // Sidebar 20%, Content 80%
+        height: '100vh',
+      }}
+    >
       {/* SIDEBAR */}
       <SideBarMenu
         onClick={onClick}
