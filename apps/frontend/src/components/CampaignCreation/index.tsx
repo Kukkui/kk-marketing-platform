@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Input, Button, Typography, Form, message, Card } from "antd";
+import dynamic from 'next/dynamic';
 
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 const { Title } = Typography;
 
 function CreateCampaign() {
