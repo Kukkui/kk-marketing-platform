@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm, message, Typography, Card, Input, Tag, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
@@ -38,6 +39,7 @@ interface DisplayAutomation {
 
 const AutomationListsPage: React.FC = () => {
   const [data, setData] = useState<DisplayAutomation[]>([]);
+  const [filteredData, setFilteredData] = useState<DisplayAutomation[]>([]);
   const [searchText, setSearchText] = useState('');
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [audiences, setAudiences] = useState<Audience[]>([]);
@@ -45,7 +47,7 @@ const AutomationListsPage: React.FC = () => {
   const [selectedAutomation, setSelectedAutomation] = useState<Automation | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Fetch all necessary data on mount
+  // Fetch all necessary data
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -56,32 +58,34 @@ const AutomationListsPage: React.FC = () => {
       ]);
 
       const automations = automationResponse.data.data;
-      const campaignList = campaignResponse.data.data;  
+      const campaignList = campaignResponse.data.data;
       const audienceList = audienceResponse.data.data;
 
       setCampaigns(campaignList);
       setAudiences(audienceList);
 
-      // Map automations to display format
-      const displayData = automations.map((automation) => {
-        const campaign = campaignList.find((c) => c.id === automation.campaign);
-        const audienceEmails = automation.audiences.map((audienceId) => {
-          const audience = audienceList.find((a) => a.id === audienceId);
+      // Map automations to display format and sort by name
+      const displayData = automations
+        .map((automation) => {
+          const campaign = campaignList.find((c) => c.id === automation.campaign);
+          const audienceEmails = automation.audiences.map((audienceId) => {
+            const audience = audienceList.find((a) => a.id === audienceId);
+            return audience ? audience.email : `Unknown (${audienceId})`;
+          });
 
-          return audience ? audience.email : `Unknown (${audienceId})`;
-        });
-
-        return {
-          key: automation.id,
-          name: automation.name,
-          schedule: automation.schedule,
-          campaign: campaign ? campaign.campaign_name : `Unknown (${automation.campaign})`,
-          audiences: audienceEmails,
-          status: automation.status,
-        };
-      });
+          return {
+            key: automation.id,
+            name: automation.name,
+            schedule: automation.schedule,
+            campaign: campaign ? campaign.campaign_name : `Unknown (${automation.campaign})`,
+            audiences: audienceEmails,
+            status: automation.status,
+          };
+        })
+        .sort((a, b) => a.name.localeCompare(b.name)); // Sort by name alphabetically
 
       setData(displayData);
+      setFilteredData(displayData);
     } catch (error) {
       const axiosError = error as AxiosError;
       message.error(`Failed to fetch data: ${axiosError.message}`);
@@ -98,6 +102,7 @@ const AutomationListsPage: React.FC = () => {
     try {
       await axios.delete(`${API_URL}/automation/${key}`);
       setData((prev) => prev.filter((item) => item.key !== key));
+      setFilteredData((prev) => prev.filter((item) => item.key !== key));
       message.success('Automation deleted successfully! 🎉');
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -126,40 +131,20 @@ const AutomationListsPage: React.FC = () => {
     }
   };
 
-  // const handleUpdateAutomation = async (values: AutomationFormValues & { id?: string }) => {
-  //   if (!values.id) return;
-
-  //   try {
-  //     const payload = {
-  //       name: values.name,
-  //       schedule: values?.schedule ? dayjs(values?.schedule).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') : "-",
-  //       campaign: values?.campaign,
-  //       audienceIds: values?.audiences,
-  //       status: values?.status,
-  //     };
-  //     await axios.put(`${API_URL}/automation/${values.id}`, payload);
-  //     await fetchData(); // Refresh the table data
-
-  //     setEditModalVisible(false);
-  //     setSelectedAutomation(null);
-  //   } catch (error) {
-  //     const axiosError = error as AxiosError;
-  //     message.error(`Error updating automation: ${axiosError.message}`);
-  //   }
-  // };
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
     setSearchText(value);
-    const filteredData = data.filter(
-      (item) =>
-        item.name.toLowerCase().includes(value) ||
-        item.schedule.toLowerCase().includes(value) ||
-        item.campaign.toLowerCase().includes(value) ||
-        item.audiences.some((email) => email.toLowerCase().includes(value)) ||
-        item.status.toLowerCase().includes(value)
-    );
-    setData(filteredData);
+    const filtered = data
+      .filter(
+        (item) =>
+          item.name.toLowerCase().includes(value) ||
+          item.schedule.toLowerCase().includes(value) ||
+          item.campaign.toLowerCase().includes(value) ||
+          item.audiences.some((email) => email.toLowerCase().includes(value)) ||
+          item.status.toLowerCase().includes(value)
+      )
+      .sort((a, b) => a.name.localeCompare(b.name)); // Maintain sort order in search
+    setFilteredData(filtered);
   };
 
   const columns = [
@@ -169,7 +154,6 @@ const AutomationListsPage: React.FC = () => {
       key: 'name',
       width: 200,
     },
-
     {
       title: 'Status',
       dataIndex: 'status',
@@ -281,7 +265,7 @@ const AutomationListsPage: React.FC = () => {
         />
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           loading={loading}
           pagination={{
             pageSize: 5,
@@ -310,7 +294,7 @@ const AutomationListsPage: React.FC = () => {
             <AutomationForm
               initialData={selectedAutomation}
               onCancel={async () => {
-                await fetchData();
+                await fetchData(); // Refresh data with consistent sort order
                 setEditModalVisible(false);
                 setSelectedAutomation(null);
               }}

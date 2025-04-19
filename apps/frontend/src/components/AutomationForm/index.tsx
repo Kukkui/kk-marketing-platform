@@ -131,15 +131,19 @@ const AutomationForm: React.FC<AutomationFormProps> = ({ initialData, onCancel }
 
       message.success(initialData ? 'Automation updated successfully! 🎉' : 'Automation created successfully! 🎉');
 
-      if (onCancel) await onCancel();
-
-      setTimeout(() => {
+      // Reset form and search states only for non-modal (create) scenario
+      if (!initialData) {
         form.resetFields();
         setCampaignSearch('');
         setAudienceSearch('');
         setSortedCampaigns(campaigns);
         setSortedAudiences(audiences);
-      }, 1000);
+      }
+
+      // Trigger onCancel to close modal (for edit scenario)
+      if (onCancel && initialData) {
+        onCancel();
+      }
     } catch (error) {
       const axiosError = error as AxiosError;
       message.error(`Error ${initialData ? 'updating' : 'creating'} automation: ${axiosError.message}`);
