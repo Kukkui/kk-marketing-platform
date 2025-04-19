@@ -1,7 +1,16 @@
+/**
+ * Component to create a new audience member.
+ * Interacts with the backend API to save the audience member to the database.
+ */
+
 import { useState } from 'react';
 import { Input, Button, Typography, Form, message, Card } from 'antd';
+import axios from 'axios';
 
 const { Title } = Typography;
+
+// Base URL from environment variable
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function CreateAudienceMember() {
   const [loading, setLoading] = useState(false);
@@ -18,13 +27,39 @@ export default function CreateAudienceMember() {
 
     setLoading(true);
     try {
-      // MOCK API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      message.success('Audience member created successfully! 🎉');
-      form.resetFields();
-    } catch (error) {
-      console.error(error);
-      message.error('Error creating audience member.');
+      // Make API call to the backend
+      const response = await axios.post(`${API_URL}/audience`, {
+        name,
+        firstName,
+        lastName,
+        email,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Check if the response is successful
+      if (response.status === 201) {
+        message.success('Audience member created successfully! 🎉');
+        form.resetFields();
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (error: any) {
+      console.error('Error creating audience member:', error);
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        message.error(
+          error.response.data.message || 'Error creating audience member.'
+        );
+      } else if (error.request) {
+        // No response received
+        message.error('Network error: Unable to reach the server.');
+      } else {
+        // Other errors
+        message.error('Error creating audience member.');
+      }
     } finally {
       setLoading(false);
     }

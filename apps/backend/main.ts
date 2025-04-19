@@ -21,19 +21,12 @@
 // server.on('error', console.error);
 
 
-// NEW
-/**
- * Entry point for the Express application.
- * Initializes the app, applies middleware, sets up routes, and starts the server.
- */
-/**
- * Entry point for the Express application.
- * Initializes the app, applies middleware, sets up routes, and starts the server.
- */
+// NEWER
 
 import express from 'express';
 import * as path from 'path';
 import morgan from 'morgan';
+import cors from 'cors';
 import { setupRoutes } from './src/api/routes';
 import { errorHandler } from './src/api/middleware/errorHandler';
 import { startServer } from './src/shared/lib/serverConfig';
@@ -41,6 +34,11 @@ import { startServer } from './src/shared/lib/serverConfig';
 const app = express();
 
 // Middleware
+app.use(cors({
+  origin: '*', // Allow requests from frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  allowedHeaders: ['Content-Type'], // Allowed headers
+}));
 app.use(morgan('dev')); // HTTP request logging
 app.use(express.json()); // Parse JSON bodies
 app.use('/assets', express.static(path.join(__dirname, 'assets'))); // Serve static files

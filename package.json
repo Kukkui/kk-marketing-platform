@@ -69,9 +69,11 @@
   ],
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.2",
+    "@types/cors": "^2.8.17",
     "@types/pg": "^8.11.13",
     "antd": "^5.24.7",
-    "axios": "^1.6.0",
+    "axios": "^1.8.4",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
     "morgan": "^1.10.0",
