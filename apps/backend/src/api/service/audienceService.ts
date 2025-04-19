@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Audience, AudiencePayload } from '../../shared/types/audienceTypes';
 
 // In-memory storage (replace with a database in production)
-let audiences: Audience[] = [];
+const audiences: Audience[] = [];
 
 /**
  * Creates a new audience.
