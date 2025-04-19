@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "types": ["node", "express"],
+    "lib": ["es2017"],
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
