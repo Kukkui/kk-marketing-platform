@@ -1,134 +1,125 @@
-import { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect, useRef } from 'react';
 import { Table, Button, Space, Popconfirm, message, Typography, Card, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import axios, { AxiosError } from 'axios';
 
 const { Title } = Typography;
 
-interface EmailList {
-  key: string;
-  listName: string;
-  description: string;
-  subscriberCount: number;
-  createdAt: string;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+interface Audience {
+  id: string;
+  name: string;
+  first_name: string;
+  last_name: string;
+  email: string;
 }
 
-const initialData: EmailList[] = [
-  {
-    key: '1',
-    listName: 'Newsletter Subscribers',
-    description: 'Monthly newsletter recipients',
-    subscriberCount: 1200,
-    createdAt: '2025-04-17',
-  },
-  {
-    key: '2',
-    listName: 'VIP Customers',
-    description: 'High-value customers',
-    subscriberCount: 350,
-    createdAt: '2025-04-10',
-  },
-  {
-    key: '3',
-    listName: 'Event Attendees',
-    description: 'Participants of past events',
-    subscriberCount: 800,
-    createdAt: '2025-04-03',
-  },
-  {
-    key: '4',
-    listName: 'Product Updates',
-    description: 'Users interested in product news',
-    subscriberCount: 2500,
-    createdAt: '2025-03-27',
-  },
-  {
-    key: '5',
-    listName: 'Beta Testers',
-    description: 'Early access program members',
-    subscriberCount: 150,
-    createdAt: '2025-03-20',
-  },
-  {
-    key: '6',
-    listName: 'Holiday Promotions',
-    description: 'Seasonal offer subscribers',
-    subscriberCount: 1800,
-    createdAt: '2025-03-13',
-  },
-  {
-    key: '7',
-    listName: 'Loyalty Program',
-    description: 'Members of rewards program',
-    subscriberCount: 600,
-    createdAt: '2025-03-06',
-  },
-  {
-    key: '8',
-    listName: 'Webinar Registrants',
-    description: 'Signed up for webinars',
-    subscriberCount: 400,
-    createdAt: '2025-02-27',
-  },
-];
-
 export default function AudienceEmailListsPage() {
-  const [data, setData] = useState<EmailList[]>(initialData);
-  const [searchText, setSearchText] = useState('');
+  const [data, setData] = useState<Audience[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const isFetchAudienceSuccess = useRef("");
 
-  const handleDelete = (key: string) => {
-    setData((prev) => prev.filter((item) => item.key !== key));
-    message.success('Email list deleted successfully! 🎉');
+  // Check if the audience data has been fetched successfully
+  useEffect(() => {
+    if (isFetchAudienceSuccess.current === "success") message.success('Audiences fetched successfully! 🎉');
+    if (isFetchAudienceSuccess.current === "failed") message.error('Failed to fetch audience data. Please try again later.');
+  }, [isFetchAudienceSuccess.current]);
+  
+  // Fetch all audiences from API
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+
+      try {
+        const response = await axios.get<Record<string, Audience[]>>(`${API_URL}/audience`);
+        const formattedData = response.data.data.map((item) => ({
+          id: item.id.toString(),
+          name: item.name,
+          first_name: item.first_name,
+          last_name: item.last_name,
+          email: item.email,
+        }));
+
+        setData(formattedData);
+        // message.success('Audiences fetched successfully! 🎉');
+        isFetchAudienceSuccess.current = "success"; // TODO: ENUM
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error fetching audience data:', axiosError);
+        
+        isFetchAudienceSuccess.current = "failed"; // TODO: ENUM
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleDelete = async (id: string): Promise<void> => {
+    try {
+      await axios.delete(`${API_URL}/audience/${id}`);
+      setData((prev) => prev.filter((item) => item.id !== id));
+      message.success('Audience member deleted successfully! 🎉');
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      message.error(`Failed to delete audience: ${axiosError.message}`);
+    }
   };
 
-  const handleEdit = (record: EmailList) => {
-    message.info(`Edit email list: ${record.listName}`);
-    // Implement edit logic (e.g., redirect to edit page or open modal)
+  const handleEdit = (record: Audience): void => {
+    message.info(`Edit audience member: ${record.name}`);
+    // Implement edit logic (e.g., open modal or redirect to edit page)
+    // Example: Could trigger a modal with a form to update via PUT request
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const value = e.target.value.toLowerCase();
     setSearchText(value);
-    const filteredData = initialData.filter(
-      (item) =>
-        item.listName.toLowerCase().includes(value) ||
-        item.description.toLowerCase().includes(value) ||
-        item.subscriberCount.toString().includes(value) ||
-        item.createdAt.toLowerCase().includes(value)
+    setData((prev) =>
+      prev.filter(
+        (item) =>
+          item.name.toLowerCase().includes(value) ||
+          item.first_name.toLowerCase().includes(value) ||
+          item.last_name.toLowerCase().includes(value) ||
+          item.email.toLowerCase().includes(value)
+      )
     );
-    setData(filteredData);
   };
 
   const columns = [
     {
-      title: 'List Name',
-      dataIndex: 'listName',
-      key: 'listName',
-      width: 200,
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      width: 250,
-    },
-    {
-      title: 'Subscribers',
-      dataIndex: 'subscriberCount',
-      key: 'subscriberCount',
-      width: 120,
-    },
-    {
-      title: 'Created At',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      title: 'Username',
+      dataIndex: 'name',
+      key: 'name',
       width: 150,
+    },
+    {
+      title: 'First Name',
+      dataIndex: 'first_name',
+      key: 'first_name',
+      width: 150,
+    },
+    {
+      title: 'Last Name',
+      dataIndex: 'last_name',
+      key: 'last_name',
+      width: 150,
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      width: 200,
     },
     {
       title: 'Actions',
       key: 'actions',
       fixed: 'right' as const,
       width: 180,
-      render: (_: any, record: EmailList) => (
+      render: (_: unknown, record: Audience) => (
         <Space>
           <Button
             icon={<EditOutlined />}
@@ -142,8 +133,8 @@ export default function AudienceEmailListsPage() {
             className="hover:scale-105 transition-all duration-300"
           />
           <Popconfirm
-            title="Are you sure to delete this email list?"
-            onConfirm={() => handleDelete(record.key)}
+            title="Are you sure to delete this audience member?"
+            onConfirm={() => handleDelete(record.id)}
             okText="Yes"
             cancelText="No"
           >
@@ -167,9 +158,8 @@ export default function AudienceEmailListsPage() {
         background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
         border: '1px solid #bae6fd',
       }}
-      variant="outlined"
     >
-      <div className="p-8 max-w-3xl mx-auto space-y-6 bg-white shadow-xl rounded-lg">
+      <div className="p-8 max-w-4xl mx-auto space-y-6 bg-white shadow-xl rounded-lg">
         <Title
           level={3}
           style={{
@@ -179,10 +169,10 @@ export default function AudienceEmailListsPage() {
             textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
           }}
         >
-          Audience Email Lists 🚀
+          Audience Members 🚀
         </Title>
         <Input
-          placeholder="Search email lists..."
+          placeholder="Search audience members..."
           prefix={<SearchOutlined />}
           onChange={handleSearch}
           style={{
@@ -194,6 +184,7 @@ export default function AudienceEmailListsPage() {
         <Table
           columns={columns}
           dataSource={data}
+          loading={loading}
           pagination={{
             pageSize: 5,
             position: ['bottomRight'],
@@ -205,4 +196,6 @@ export default function AudienceEmailListsPage() {
       </div>
     </Card>
   );
-}
+};
+
+// export default AudienceEmailListsPage;
