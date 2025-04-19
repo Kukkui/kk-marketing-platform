@@ -36,7 +36,8 @@ export async function getCampaignByIdHandler(req: Request, res: Response) {
     return res.status(404).json({ message: 'Campaign not found' });
   }
   const response: CampaignResponse = { data: campaign };
-  res.status(200).json(response);
+
+  return res.status(200).json(response);
 }
 
 /**
@@ -50,7 +51,8 @@ export async function updateCampaignHandler(req: Request, res: Response) {
     return res.status(404).json({ message: 'Campaign not found' });
   }
   const response: CampaignResponse = { data: updatedCampaign, message: 'Campaign updated successfully' };
-  res.status(200).json(response);
+  
+  return res.status(200).json(response);
 }
 
 /**
@@ -62,5 +64,6 @@ export async function deleteCampaignHandler(req: Request, res: Response) {
   if (!deleted) {
     return res.status(404).json({ message: 'Campaign not found' });
   }
-  res.status(204).send();
+
+  return res.status(204).send();
 }

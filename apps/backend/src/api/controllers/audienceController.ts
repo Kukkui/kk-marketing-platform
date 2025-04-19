@@ -36,7 +36,8 @@ export async function getAudienceByIdHandler(req: Request, res: Response) {
     return res.status(404).json({ message: 'Audience not found' });
   }
   const response: AudienceResponse = { data: audience };
-  res.status(200).json(response);
+  
+  return res.status(200).json(response);
 }
 
 /**
@@ -50,7 +51,8 @@ export async function updateAudienceHandler(req: Request, res: Response) {
     return res.status(404).json({ message: 'Audience not found' });
   }
   const response: AudienceResponse = { data: updatedAudience, message: 'Audience updated successfully' };
-  res.status(200).json(response);
+  
+  return res.status(200).json(response);
 }
 
 /**
@@ -62,5 +64,6 @@ export function deleteAudienceHandler(req: Request, res: Response) {
   if (!deleted) {
     return res.status(404).json({ message: 'Audience not found' });
   }
-  res.status(204).send();
+
+  return res.status(204).send();
 }

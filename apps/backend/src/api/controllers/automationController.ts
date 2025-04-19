@@ -41,7 +41,8 @@ export async function getAutomationByIdHandler(req: Request, res: Response) {
     return res.status(404).json({ message: 'Automation not found' });
   }
   const response: AutomationResponse = { data: automation };
-  res.status(200).json(response);
+  
+  return res.status(200).json(response);;
 }
 
 /**
@@ -59,7 +60,8 @@ export async function updateAutomationHandler(req: Request, res: Response) {
     return res.status(404).json({ message: 'Automation not found' });
   }
   const response: AutomationResponse = { data: updatedAutomation, message: 'Automation updated successfully' };
-  res.status(200).json(response);
+
+  return res.status(200).json(response);
 }
 
 /**
@@ -71,5 +73,6 @@ export async function deleteAutomationHandler(req: Request, res: Response) {
   if (!deleted) {
     return res.status(404).json({ message: 'Automation not found' });
   }
-  res.status(204).send();
+  
+  return res.status(204).send();
 }
