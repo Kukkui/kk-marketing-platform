@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm, message, Typography, Card, Input, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
@@ -24,13 +24,6 @@ export default function AudienceEmailListsPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [selectedAudience, setSelectedAudience] = useState<Audience | null>(null);
-  const isFetchAudienceSuccess = useRef("");
-
-  // Check if the audience data has been fetched successfully
-  useEffect(() => {
-    if (isFetchAudienceSuccess.current === "success") message.success('Audiences fetched successfully! 🎉');
-    if (isFetchAudienceSuccess.current === "failed") message.error('Failed to fetch audience data. Please try again later.');
-  }, [isFetchAudienceSuccess.current]);
 
   // Fetch all audiences from API
   useEffect(() => {
@@ -47,11 +40,9 @@ export default function AudienceEmailListsPage() {
         }));
         setData(formattedData);
         setFilteredData(formattedData);
-        isFetchAudienceSuccess.current = "success";
       } catch (error) {
         const axiosError = error as AxiosError;
         console.error('Error fetching audience data:', axiosError);
-        isFetchAudienceSuccess.current = "failed";
       } finally {
         setLoading(false);
       }

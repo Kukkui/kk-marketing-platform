@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm, message, Typography, Card, Input, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
@@ -25,13 +25,6 @@ const CampaignListsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
-  const isFetchCampaignSuccess = useRef("");
-
-  // Show success or error message after fetching campaigns
-  useEffect(() => {
-    if (isFetchCampaignSuccess.current === "success") message.success('Campaigns fetched successfully! 🎉');
-    if (isFetchCampaignSuccess.current === "failed") message.error('Failed to fetch campaigns. Please try again later.');
-  }, [isFetchCampaignSuccess.current]);
 
   // Fetch campaigns from API
   useEffect(() => {
@@ -48,11 +41,9 @@ const CampaignListsPage: React.FC = () => {
         }));
         setData(formattedData);
         setFilteredData(formattedData);
-        isFetchCampaignSuccess.current = "success";
       } catch (error) {
         const axiosError = error as AxiosError;
         console.error('Error fetching campaign data:', axiosError);
-        isFetchCampaignSuccess.current = "failed";
       } finally {
         setLoading(false);
       }
