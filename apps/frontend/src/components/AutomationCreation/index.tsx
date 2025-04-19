@@ -111,7 +111,18 @@ const AutomationForm: React.FC<AutomationFormProps> = ({ initialData, onSubmit, 
 
     setLoading(true);
     try {
-      await onSubmit({ ...values, id: initialData?.id });
+      if (initialData) {
+        await onSubmit({ ...values, id: initialData?.id });
+      } else {
+        await axios.post(`${API_URL}/automation`, {
+          name: values.name,
+          schedule: values?.schedule ? dayjs(values?.schedule).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') : "-",
+          campaign: values?.campaign,
+          audienceIds: values?.audiences,
+          status: values?.status,
+        });
+      }
+
       message.success(initialData ? 'Automation updated successfully! 🎉' : 'Automation created successfully! 🎉');
       form.resetFields();
       setCampaignSearch('');

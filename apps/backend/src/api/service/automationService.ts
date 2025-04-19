@@ -113,12 +113,12 @@ export async function updateAutomation(id: string, payload: AutomationPayload): 
 
   const query = `
     UPDATE automations
-    SET name = $1, schedule = $2, campaign_id = $3, audience_ids = $4
-    WHERE id = $5
+    SET name = $1, schedule = $2, campaign_id = $3, audience_ids = $4, status = $5
+    WHERE id = $6
     RETURNING *;
   `;
   const schedule = payload.schedule ? payload.schedule.toISOString() : null;
-  const values = [payload.name, schedule, payload.campaign, payload.audienceIds, id];
+  const values = [payload.name, schedule, payload.campaign, payload.audienceIds, payload.status, id];
   const { rows } = await pool.query(query, values);
   if (rows.length === 0) return undefined;
   return await formatAutomation(rows[0] as AutomationDb);
