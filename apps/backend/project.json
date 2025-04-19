@@ -4,7 +4,7 @@
       "serve": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "nodemon --watch src --exec 'ts-node apps/backend/main.ts'"
+          "command": "nodemon --watch src --exec 'ts-node apps/backend/src/main.ts'"
         }
       },
       "build": {

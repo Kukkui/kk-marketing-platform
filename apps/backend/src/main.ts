@@ -27,10 +27,10 @@ import express from 'express';
 import * as path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
-import { setupRoutes } from './src/api/routes';
-import { errorHandler } from './src/api/middleware/errorHandler';
-import { startServer } from './src/shared/lib/serverConfig';
-import { startAutomationCron } from './src/api/service/automationService';
+import { setupRoutes } from './api/routes';
+import { errorHandler } from './api/middleware/errorHandler';
+import { startServer } from './shared/lib/serverConfig';
+import { startAutomationCron } from './api/service/automationService';
 
 const app = express();
 
