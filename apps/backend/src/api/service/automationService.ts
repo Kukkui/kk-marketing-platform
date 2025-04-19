@@ -246,7 +246,7 @@ export function startAutomationCron(): void {
           // Send email to each audience member
           for (const audience of audiences) {
             const mailOptions = {
-              from: `Marketing Platform`,
+              from: `KK Marketing Platform`,
               to: audience.email,
               subject: campaign.subject_line,
               html: campaign.email_content,
