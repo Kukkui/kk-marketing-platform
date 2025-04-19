@@ -13,8 +13,8 @@ import { Campaign, CampaignPayload } from '../../shared/types/campaignTypes';
  */
 export async function createCampaign(payload: CampaignPayload): Promise<Campaign> {
   const query = `
-    INSERT INTO campaigns (campaign_name, subject_line, email_content)
-    VALUES ($1, $2, $3)
+    INSERT INTO campaigns (campaign_name, subject_line, email_content, created_at)
+    VALUES ($1, $2, $3, NOW())
     RETURNING *;
   `;
   const values = [payload.campaignName, payload.subjectLine, payload.emailContent];

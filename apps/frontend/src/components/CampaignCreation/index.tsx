@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Input, Button, Typography, Form, message, Card } from 'antd';
 import dynamic from 'next/dynamic';
+import axios, { AxiosError } from 'axios';
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -10,27 +11,32 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 
 const { Title } = Typography;
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+interface CampaignFormValues {
+  campaignName: string;
+  subjectLine: string;
+  emailContent: string;
+}
+
 export default function CreateCampaign() {
-  const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [form] = Form.useForm<CampaignFormValues>();
 
-  const handleSubmit = async (values: {
-    campaignName: string;
-    subjectLine: string;
-    emailContent: string;
-  }) => {
+  const handleSubmit = async (values: CampaignFormValues) => {
     const { campaignName, subjectLine, emailContent } = values;
-    console.log({ campaignName, subjectLine, emailContent });
-
     setLoading(true);
     try {
-      // MOCK API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await axios.post(`${API_URL}/campaign`, {
+        campaignName,
+        subjectLine,
+        emailContent,
+      });
       message.success('Campaign created successfully! 🎉');
       form.resetFields();
     } catch (error) {
-      console.error(error);
-      message.error('Error creating campaign.');
+      const axiosError = error as AxiosError;
+      message.error(`Error creating campaign: ${axiosError.message}`);
     } finally {
       setLoading(false);
     }
