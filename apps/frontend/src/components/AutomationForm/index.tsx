@@ -178,11 +178,15 @@ const AutomationForm: React.FC<AutomationFormProps> = ({ initialData, onCancel }
         rules={[{ required: true, message: 'Please select a schedule!' }]}
       >
         <DatePicker
-          showTime
+          showTime={{
+            format: 'HH:00', // Display only hours
+            defaultValue: dayjs('00:00', 'HH:mm'), // Default time value
+          }}
           style={{ width: '100%', borderRadius: '8px' }}
           placeholder="Select date and time"
           disabledDate={(current) => current && current < dayjs().startOf('day')}
           className="hover:border-blue-400 transition-all duration-300"
+          format="YYYY-MM-DD HH:00" // Format for the date and time
         />
       </Form.Item>
 

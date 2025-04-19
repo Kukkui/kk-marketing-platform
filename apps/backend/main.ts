@@ -30,6 +30,7 @@ import cors from 'cors';
 import { setupRoutes } from './src/api/routes';
 import { errorHandler } from './src/api/middleware/errorHandler';
 import { startServer } from './src/shared/lib/serverConfig';
+import { startAutomationCron } from './src/api/service/automationService';
 
 const app = express();
 
@@ -42,6 +43,9 @@ app.use(cors({
 app.use(morgan('dev')); // HTTP request logging
 app.use(express.json()); // Parse JSON bodies
 app.use('/assets', express.static(path.join(__dirname, 'assets'))); // Serve static files
+
+// Cron jobs
+startAutomationCron();
 
 // Routes
 setupRoutes(app);
