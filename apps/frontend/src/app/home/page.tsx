@@ -67,9 +67,7 @@ const items: MenuItem[] = [
 const App: React.FC = () => {
   const [menu, setMenu] = useState<string>('');
 
-  const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
-    
+  const onClick: MenuProps['onClick'] = (e) => {    
     const menuTitle = e?.key;
 
     setMenu(menuTitle);
