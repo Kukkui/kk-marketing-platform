@@ -10,9 +10,9 @@ import { AudiencePayload, AudienceResponse } from '../../shared/types/audienceTy
 /**
  * Creates a new audience.
  */
-export function createAudienceHandler(req: Request, res: Response) {
+export async function createAudienceHandler(req: Request, res: Response) {
   const payload: AudiencePayload = req.body;
-  const audience = createAudience(payload);
+  const audience = await createAudience(payload);
   const response: AudienceResponse = { data: audience, message: 'Audience created successfully' };
   res.status(201).json(response);
 }
@@ -20,8 +20,8 @@ export function createAudienceHandler(req: Request, res: Response) {
 /**
  * Retrieves all audiences.
  */
-export function getAllAudiencesHandler(req: Request, res: Response) {
-  const audiences = getAllAudiences();
+export async function getAllAudiencesHandler(req: Request, res: Response) {
+  const audiences = await getAllAudiences();
   const response: AudienceResponse = { data: audiences };
   res.status(200).json(response);
 }
@@ -29,9 +29,9 @@ export function getAllAudiencesHandler(req: Request, res: Response) {
 /**
  * Retrieves an audience by ID.
  */
-export function getAudienceByIdHandler(req: Request, res: Response) {
+export async function getAudienceByIdHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const audience = getAudienceById(id);
+  const audience = await getAudienceById(Number(id));
   if (!audience) {
     return res.status(404).json({ message: 'Audience not found' });
   }
@@ -42,10 +42,10 @@ export function getAudienceByIdHandler(req: Request, res: Response) {
 /**
  * Updates an audience by ID.
  */
-export function updateAudienceHandler(req: Request, res: Response) {
+export async function updateAudienceHandler(req: Request, res: Response) {
   const { id } = req.params;
   const payload: AudiencePayload = req.body;
-  const updatedAudience = updateAudience(id, payload);
+  const updatedAudience = await updateAudience(Number(id), payload);
   if (!updatedAudience) {
     return res.status(404).json({ message: 'Audience not found' });
   }
@@ -58,7 +58,7 @@ export function updateAudienceHandler(req: Request, res: Response) {
  */
 export function deleteAudienceHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const deleted = deleteAudience(id);
+  const deleted = deleteAudience(Number(id));
   if (!deleted) {
     return res.status(404).json({ message: 'Audience not found' });
   }

@@ -6,9 +6,10 @@
  * Structure of a Campaign.
  */
 export interface Campaign {
-    id: string;
-    title: string;
-    schedule: string; // ISO 8601 date string
+    id: number;
+    campaignName: string;
+    subjectLine: string;
+    emailContent: string;
   }
   
   /**
@@ -23,6 +24,7 @@ export interface Campaign {
    * Structure of the Campaign creation/update payload.
    */
   export interface CampaignPayload {
-    title: string;
-    schedule: string;
+    campaignName: string;
+    subjectLine: string;
+    emailContent: string;
   }

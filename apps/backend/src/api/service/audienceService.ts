@@ -1,35 +1,35 @@
 /**
  * Service layer for Audience feature.
- * Handles business logic for Audience CRUD operations.
+ * Handles business logic for Audience CRUD operations using PostgreSQL.
  */
 
-import { v4 as uuidv4 } from 'uuid';
+import pool from '../../config/db';
 import { Audience, AudiencePayload } from '../../shared/types/audienceTypes';
-
-// In-memory storage (replace with a database in production)
-const audiences: Audience[] = [];
 
 /**
  * Creates a new audience.
  * @param payload - The audience data to create.
  * @returns The created audience.
  */
-export function createAudience(payload: AudiencePayload): Audience {
-  const audience: Audience = {
-    id: uuidv4(),
-    name: payload.name,
-    subscriberCount: payload.subscriberCount,
-  };
-  audiences.push(audience);
-  return audience;
+export async function createAudience(payload: AudiencePayload): Promise<Audience> {
+  const query = `
+    INSERT INTO audiences (name, first_name, last_name, email)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *;
+  `;
+  const values = [payload.name, payload.firstName, payload.lastName, payload.email];
+  const { rows } = await pool.query(query, values);
+  return rows[0] as Audience;
 }
 
 /**
  * Retrieves all audiences.
  * @returns List of all audiences.
  */
-export function getAllAudiences(): Audience[] {
-  return audiences;
+export async function getAllAudiences(): Promise<Audience[]> {
+  const query = 'SELECT * FROM audiences;';
+  const { rows } = await pool.query(query);
+  return rows as Audience[];
 }
 
 /**
@@ -37,8 +37,10 @@ export function getAllAudiences(): Audience[] {
  * @param id - The audience ID.
  * @returns The audience if found, or undefined.
  */
-export function getAudienceById(id: string): Audience | undefined {
-  return audiences.find(audience => audience.id === id);
+export async function getAudienceById(id: number): Promise<Audience | undefined> {
+  const query = 'SELECT * FROM audiences WHERE id = $1;';
+  const { rows } = await pool.query(query, [id]);
+  return rows.length > 0 ? (rows[0] as Audience) : undefined;
 }
 
 /**
@@ -47,13 +49,16 @@ export function getAudienceById(id: string): Audience | undefined {
  * @param payload - The updated audience data.
  * @returns The updated audience, or undefined if not found.
  */
-export function updateAudience(id: string, payload: AudiencePayload): Audience | undefined {
-  const index = audiences.findIndex(audience => audience.id === id);
-  if (index === -1) return undefined;
-
-  const updatedAudience = { ...audiences[index], ...payload };
-  audiences[index] = updatedAudience;
-  return updatedAudience;
+export async function updateAudience(id: number, payload: AudiencePayload): Promise<Audience | undefined> {
+  const query = `
+    UPDATE audiences
+    SET name = $1, first_name = $2, last_name = $3, email = $4
+    WHERE id = $5
+    RETURNING *;
+  `;
+  const values = [payload.name, payload.firstName, payload.lastName, payload.email, id];
+  const { rows } = await pool.query(query, values);
+  return rows.length > 0 ? (rows[0] as Audience) : undefined;
 }
 
 /**
@@ -61,10 +66,8 @@ export function updateAudience(id: string, payload: AudiencePayload): Audience |
  * @param id - The audience ID.
  * @returns True if deleted, false if not found.
  */
-export function deleteAudience(id: string): boolean {
-  const index = audiences.findIndex(audience => audience.id === id);
-  if (index === -1) return false;
-
-  audiences.splice(index, 1);
-  return true;
+export async function deleteAudience(id: number): Promise<boolean> {
+  const query = 'DELETE FROM audiences WHERE id = $1;';
+  const { rowCount } = await pool.query(query, [id]);
+  return rowCount ? rowCount > 0 : false;
 }

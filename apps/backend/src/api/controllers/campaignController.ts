@@ -10,9 +10,9 @@ import { CampaignPayload, CampaignResponse } from '../../shared/types/campaignTy
 /**
  * Creates a new campaign.
  */
-export function createCampaignHandler(req: Request, res: Response) {
+export async function createCampaignHandler(req: Request, res: Response) {
   const payload: CampaignPayload = req.body;
-  const campaign = createCampaign(payload);
+  const campaign = await createCampaign(payload);
   const response: CampaignResponse = { data: campaign, message: 'Campaign created successfully' };
   res.status(201).json(response);
 }
@@ -20,8 +20,8 @@ export function createCampaignHandler(req: Request, res: Response) {
 /**
  * Retrieves all campaigns.
  */
-export function getAllCampaignsHandler(req: Request, res: Response) {
-  const campaigns = getAllCampaigns();
+export async function getAllCampaignsHandler(req: Request, res: Response) {
+  const campaigns = await getAllCampaigns();
   const response: CampaignResponse = { data: campaigns };
   res.status(200).json(response);
 }
@@ -29,9 +29,9 @@ export function getAllCampaignsHandler(req: Request, res: Response) {
 /**
  * Retrieves a campaign by ID.
  */
-export function getCampaignByIdHandler(req: Request, res: Response) {
+export async function getCampaignByIdHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const campaign = getCampaignById(id);
+  const campaign = await getCampaignById(Number(id));
   if (!campaign) {
     return res.status(404).json({ message: 'Campaign not found' });
   }
@@ -42,10 +42,10 @@ export function getCampaignByIdHandler(req: Request, res: Response) {
 /**
  * Updates a campaign by ID.
  */
-export function updateCampaignHandler(req: Request, res: Response) {
+export async function updateCampaignHandler(req: Request, res: Response) {
   const { id } = req.params;
   const payload: CampaignPayload = req.body;
-  const updatedCampaign = updateCampaign(id, payload);
+  const updatedCampaign = await updateCampaign(Number(id), payload);
   if (!updatedCampaign) {
     return res.status(404).json({ message: 'Campaign not found' });
   }
@@ -56,9 +56,9 @@ export function updateCampaignHandler(req: Request, res: Response) {
 /**
  * Deletes a campaign by ID.
  */
-export function deleteCampaignHandler(req: Request, res: Response) {
+export async function deleteCampaignHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const deleted = deleteCampaign(id);
+  const deleted = deleteCampaign(Number(id));
   if (!deleted) {
     return res.status(404).json({ message: 'Campaign not found' });
   }

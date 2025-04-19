@@ -1,35 +1,35 @@
 /**
  * Service layer for Campaign feature.
- * Handles business logic for Campaign CRUD operations.
+ * Handles business logic for Campaign CRUD operations using PostgreSQL.
  */
 
-import { v4 as uuidv4 } from 'uuid';
+import pool from '../../config/db';
 import { Campaign, CampaignPayload } from '../../shared/types/campaignTypes';
-
-// In-memory storage (replace with a database in production)
-const campaigns: Campaign[] = [];
 
 /**
  * Creates a new campaign.
  * @param payload - The campaign data to create.
  * @returns The created campaign.
  */
-export function createCampaign(payload: CampaignPayload): Campaign {
-  const campaign: Campaign = {
-    id: uuidv4(),
-    title: payload.title,
-    schedule: payload.schedule,
-  };
-  campaigns.push(campaign);
-  return campaign;
+export async function createCampaign(payload: CampaignPayload): Promise<Campaign> {
+  const query = `
+    INSERT INTO campaigns (campaign_name, subject_line, email_content)
+    VALUES ($1, $2, $3)
+    RETURNING *;
+  `;
+  const values = [payload.campaignName, payload.subjectLine, payload.emailContent];
+  const { rows } = await pool.query(query, values);
+  return rows[0] as Campaign;
 }
 
 /**
  * Retrieves all campaigns.
  * @returns List of all campaigns.
  */
-export function getAllCampaigns(): Campaign[] {
-  return campaigns;
+export async function getAllCampaigns(): Promise<Campaign[]> {
+  const query = 'SELECT * FROM campaigns;';
+  const { rows } = await pool.query(query);
+  return rows as Campaign[];
 }
 
 /**
@@ -37,8 +37,10 @@ export function getAllCampaigns(): Campaign[] {
  * @param id - The campaign ID.
  * @returns The campaign if found, or undefined.
  */
-export function getCampaignById(id: string): Campaign | undefined {
-  return campaigns.find(campaign => campaign.id === id);
+export async function getCampaignById(id: number): Promise<Campaign | undefined> {
+  const query = 'SELECT * FROM campaigns WHERE id = $1;';
+  const { rows } = await pool.query(query, [id]);
+  return rows.length > 0 ? (rows[0] as Campaign) : undefined;
 }
 
 /**
@@ -47,13 +49,16 @@ export function getCampaignById(id: string): Campaign | undefined {
  * @param payload - The updated campaign data.
  * @returns The updated campaign, or undefined if not found.
  */
-export function updateCampaign(id: string, payload: CampaignPayload): Campaign | undefined {
-  const index = campaigns.findIndex(campaign => campaign.id === id);
-  if (index === -1) return undefined;
-
-  const updatedCampaign = { ...campaigns[index], ...payload };
-  campaigns[index] = updatedCampaign;
-  return updatedCampaign;
+export async function updateCampaign(id: number, payload: CampaignPayload): Promise<Campaign | undefined> {
+  const query = `
+    UPDATE campaigns
+    SET campaign_name = $1, subject_line = $2, email_content = $3
+    WHERE id = $4
+    RETURNING *;
+  `;
+  const values = [payload.campaignName, payload.subjectLine, payload.emailContent, id];
+  const { rows } = await pool.query(query, values);
+  return rows.length > 0 ? (rows[0] as Campaign) : undefined;
 }
 
 /**
@@ -61,10 +66,8 @@ export function updateCampaign(id: string, payload: CampaignPayload): Campaign |
  * @param id - The campaign ID.
  * @returns True if deleted, false if not found.
  */
-export function deleteCampaign(id: string): boolean {
-  const index = campaigns.findIndex(campaign => campaign.id === id);
-  if (index === -1) return false;
-
-  campaigns.splice(index, 1);
-  return true;
+export async function deleteCampaign(id: number): Promise<boolean> {
+  const query = 'DELETE FROM campaigns WHERE id = $1;';
+  const { rowCount } = await pool.query(query, [id]);
+  return rowCount ? rowCount > 0 : false;
 }

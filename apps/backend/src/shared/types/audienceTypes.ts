@@ -6,9 +6,11 @@
  * Structure of an Audience.
  */
 export interface Audience {
-    id: string;
+    id: number;
     name: string;
-    subscriberCount: number;
+    firstName: string;
+    lastName: string;
+    email: string;
   }
   
   /**
@@ -24,5 +26,7 @@ export interface Audience {
    */
   export interface AudiencePayload {
     name: string;
-    subscriberCount: number;
+    firstName: string;
+    lastName: string;
+    email: string;
   }
