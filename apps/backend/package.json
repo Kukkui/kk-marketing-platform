@@ -2,7 +2,7 @@
   "name": "@marketing-platform/backend",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc --project tsconfig.app.json",
+    "build": "npm install && tsc",
     "start": "node dist/main.js",
     "dev": "nodemon --watch src --exec 'ts-node main.ts'",
     "test": "jest",
