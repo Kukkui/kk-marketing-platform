@@ -36,7 +36,7 @@ export async function getAllAutomationsHandler(req: Request, res: Response) {
  */
 export async function getAutomationByIdHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const automation = await getAutomationById(parseInt(id, 10));
+  const automation = await getAutomationById((id));
   if (!automation) {
     return res.status(404).json({ message: 'Automation not found' });
   }
@@ -54,7 +54,7 @@ export async function updateAutomationHandler(req: Request, res: Response) {
     ...payload,
     schedule: payload.schedule ? dayjs(payload.schedule) : null,
   };
-  const updatedAutomation = await updateAutomation(parseInt(id, 10), formattedPayload);
+  const updatedAutomation = await updateAutomation(id, formattedPayload);
   if (!updatedAutomation) {
     return res.status(404).json({ message: 'Automation not found' });
   }
@@ -67,7 +67,7 @@ export async function updateAutomationHandler(req: Request, res: Response) {
  */
 export async function deleteAutomationHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const deleted = await deleteAutomation(parseInt(id, 10));
+  const deleted = await deleteAutomation(id);
   if (!deleted) {
     return res.status(404).json({ message: 'Automation not found' });
   }

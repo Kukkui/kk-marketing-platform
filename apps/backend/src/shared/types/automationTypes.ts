@@ -1,45 +1,38 @@
-/**
- * TypeScript types for Automation feature.
- */
-
 import { Dayjs } from 'dayjs';
 
-/**
- * Structure of an Automation.
- */
-export interface Automation {
+export interface Audience {
   id: number;
-  name: string;
-  schedule: Dayjs | null;
-  campaign: number | null;
-  audiences: { id: number; email: string }[];
+  email: string;
 }
 
-/**
- * Structure of the Automation response.
- */
-export interface AutomationResponse {
-  data: Automation | Automation[];
-  message?: string;
-}
-
-/**
- * Structure of the Automation creation/update payload.
- */
 export interface AutomationPayload {
   name: string;
   schedule: Dayjs | null;
-  campaign: number | null;
-  audiences: { id: number; email: string }[];
+  campaign: number; // Changed to number (was likely a UUID)
+  audienceIds: number[]; // Changed to array of numbers (previously used a junction table)
+  status: string; // Optional status field
 }
 
-/**
- * Structure of the Automation as stored in the database.
- * Used internally for database operations.
- */
 export interface AutomationDb {
-  id: number;
+  id: string; // UUID in the database
   name: string;
-  schedule: string | null; // ISO 8601 string
-  campaign_id: number | null;
+  schedule: string | null; // Stored as ISO string in DB
+  campaign_id: number;
+  audience_ids: number[];
+  created_at: string;
+  status: string; // Optional status field
+}
+
+export interface Automation {
+  id: string;
+  name: string;
+  schedule: Dayjs | null;
+  campaign: number;
+  audiences: Audience[] | number[]; // Changed to array of Audience objects
+  status: string; // Optional status field
+}
+
+export interface AutomationResponse {
+  data: Automation | Automation[] | undefined;
+  message?: string;
 }
