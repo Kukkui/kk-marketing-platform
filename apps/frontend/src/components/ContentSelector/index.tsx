@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import CreateCampaign from "../CampaignCreation";
 import CampaignListsPage from "../CampaignLists";
-import AudienceEmailListsPage from "../Audience";
+import AudienceEmailListsPage from "../AudienceLists";
 import CreateAudienceMember from "../AudienceCreation";
+import AutomationForm from "../AutomationCreation";
+import AutomationListsPage from "../AutomationLists";
 
 const ContentSelector = (props: { menu: string }) => {
     const { menu } = props;
@@ -21,6 +23,12 @@ const ContentSelector = (props: { menu: string }) => {
             case 'create_audience':
                 // return 'Create Audience';
                 return <CreateAudienceMember />;
+            case 'automation_list':
+                // return 'Automation List';
+                return <AutomationListsPage />;
+            case 'create_automation':
+                // return 'Create Automation';
+                return <AutomationForm />;
             default:
                 return 'PLEASE SELECT A MENU';
         }

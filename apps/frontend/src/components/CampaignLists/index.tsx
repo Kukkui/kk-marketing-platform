@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, Popconfirm, message, Typography, Card, Input } from 'antd';
-import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  Table,
+  Button,
+  Space,
+  Popconfirm,
+  message,
+  Typography,
+  Card,
+  Input,
+} from 'antd';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -68,12 +81,12 @@ const CampaignListsPage: React.FC = () => {
 
   const handleDelete = (key: string) => {
     setData((prev) => prev.filter((item) => item.key !== key));
-    message.success('Campaign deleted successfully');
+    message.success('Campaign deleted successfully! 🎉');
   };
 
   const handleEdit = (record: Campaign) => {
     message.info(`Edit campaign: ${record.campaignName}`);
-    // You can redirect or open a modal to edit
+    // Redirect or open modal logic
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,37 +106,50 @@ const CampaignListsPage: React.FC = () => {
       title: 'Campaign Name',
       dataIndex: 'campaignName',
       key: 'campaignName',
+      width: 200,
     },
     {
       title: 'Subject Line',
       dataIndex: 'subjectLine',
       key: 'subjectLine',
+      width: 300,
     },
     {
       title: 'Created At',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      width: 180,
     },
     {
       title: 'Actions',
       key: 'actions',
+      fixed: 'right' as const,
+      width: 180,
       render: (_: any, record: Campaign) => (
         <Space>
           <Button
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
-          >
-            Edit
-          </Button>
+            style={{
+              borderRadius: '6px',
+              background: '#60a5fa',
+              color: 'white',
+              border: 'none',
+            }}
+            className="hover:scale-105 transition-all duration-300"
+          />
           <Popconfirm
             title="Are you sure to delete this campaign?"
             onConfirm={() => handleDelete(record.key)}
             okText="Yes"
             cancelText="No"
           >
-            <Button danger icon={<DeleteOutlined />}>
-              Delete
-            </Button>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              style={{ borderRadius: '6px' }}
+              className="hover:scale-105 transition-all duration-300"
+            />
           </Popconfirm>
         </Space>
       ),
@@ -131,14 +157,36 @@ const CampaignListsPage: React.FC = () => {
   ];
 
   return (
-    <Card style={{ height: '100vh', overflow: 'auto' }} variant="outlined">
-      <div className="p-6 max-w-3xl mx-auto space-y-6 bg-white shadow rounded-md">
-        <Title level={3}>Campaign Lists</Title>
+    <Card
+      style={{
+        minHeight: '100vh',
+        overflow: 'auto',
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+        border: '1px solid #bae6fd',
+      }}
+      variant="outlined"
+    >
+      <div className="p-8 max-w-3xl mx-auto space-y-6 bg-white shadow-xl rounded-lg">
+        <Title
+          level={3}
+          style={{
+            color: '#1e40af',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+          }}
+        >
+          Campaign Lists 📢
+        </Title>
         <Input
           placeholder="Search campaigns..."
           prefix={<SearchOutlined />}
           onChange={handleSearch}
-          style={{ marginBottom: '16px' }}
+          style={{
+            marginBottom: '16px',
+            borderRadius: '8px',
+          }}
+          className="hover:border-blue-400 transition-all duration-300"
         />
         <Table
           columns={columns}
@@ -147,6 +195,9 @@ const CampaignListsPage: React.FC = () => {
             pageSize: 5,
             position: ['bottomRight'],
           }}
+          scroll={{ x: true }}
+          rowClassName="hover:bg-blue-50 transition-all duration-300"
+          style={{ borderRadius: '8px', overflow: 'hidden' }}
         />
       </div>
     </Card>

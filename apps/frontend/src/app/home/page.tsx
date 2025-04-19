@@ -11,7 +11,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AppstoreOutlined, ContainerOutlined, DesktopOutlined, MailOutlined, PieChartOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, ContainerOutlined, DashboardOutlined, DesktopOutlined, MailOutlined, PieChartOutlined, PlusOutlined, RobotOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import Image from 'next/image';
@@ -37,6 +37,15 @@ const items: MenuItem[] = [
     children: [
       { key: 'audience_list', icon: <DesktopOutlined />, label: 'Audience Lists' },
       { key: 'create_audience', icon: <PieChartOutlined />, label: 'Create Audiences' },
+    ],
+  },
+  {
+    key: 'automation',
+    label: 'Automation',
+    icon: <RobotOutlined/>,
+    children: [
+      { key: 'automation_list', icon: <SettingOutlined />, label: 'Automation Lists' }, // SettingOutlined for a list/settings-like icon
+      { key: 'create_automation', icon: <PlusOutlined />, label: 'Create Automation' }, // PlusOutlined for creation
     ],
   }
   // {

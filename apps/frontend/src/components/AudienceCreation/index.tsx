@@ -1,119 +1,127 @@
-import React, { useState } from "react";
-import { Input, Button, Typography, Form, message, Card } from "antd";
+import { useState } from 'react';
+import { Input, Button, Typography, Form, message, Card } from 'antd';
 
 const { Title } = Typography;
 
-const CreateAudienceMember: React.FC = () => {
-  const [name, setName] = useState("");
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
+export default function CreateAudienceMember() {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const handleSubmit = async (body: {
+  const handleSubmit = async (values: {
     name: string;
     firstName: string;
     lastName: string;
     email: string;
   }) => {
-    const { name, firstName, lastName, email } = body;
-    console.log({
-        name,
-        firstName,
-        lastName,
-        email,
-    });
-
-    if (!name || !email) {
-      message.warning("Please fill in all required fields (Name and Email).");
-      return;
-    }
-
-    // Basic email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      message.warning("Please enter a valid email address.");
-      return;
-    }
+    const { name, firstName, lastName, email } = values;
+    console.log({ name, firstName, lastName, email });
 
     setLoading(true);
     try {
       // MOCK API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      message.success("Audience member created successfully!");
-
-      form.setFieldsValue({
-        name: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-      });
-      
+      message.success('Audience member created successfully! 🎉');
+      form.resetFields();
     } catch (error) {
       console.error(error);
-      message.error("Error creating audience member.");
+      message.error('Error creating audience member.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card style={{ height: '100vh', overflow: 'auto'}} variant='outlined'>
-      <div className="p-6 max-w-3xl mx-auto space-y-6 bg-white shadow rounded-md">
-        <Title level={3}>Create New Audience Member</Title>
+    <Card
+      style={{
+        minHeight: '100vh',
+        overflow: 'auto',
+        background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+        border: '1px solid #bae6fd',
+      }}
+      variant="outlined"
+    >
+      <div className="p-8 max-w-3xl mx-auto space-y-6 bg-white shadow-xl rounded-lg">
+        <Title
+          level={3}
+          style={{
+            color: '#1e40af',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+          }}
+        >
+          Create New Audience Member 🚀
+        </Title>
 
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item 
-            label="Name" 
-            name = "name"
-            rules={[{ required: true, message: "Please input your name!" }]}
-            >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{ name: '', firstName: '', lastName: '', email: '' }}
+        >
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: 'Please input the name!' }]}
+          >
             <Input
               placeholder="e.g. John Doe"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              style={{ borderRadius: '8px' }}
+              className="hover:border-blue-400 transition-all duration-300"
             />
           </Form.Item>
 
-          <Form.Item 
-            label="First Name"
-            name = "firstName"
-            >
+          <Form.Item label="First Name" name="firstName">
             <Input
               placeholder="e.g. John"
+              style={{ borderRadius: '8px' }}
+              className="hover:border-blue-400 transition-all duration-300"
             />
           </Form.Item>
 
-          <Form.Item 
-            label="Last Name"
-            name = "lastName"
-            >
+          <Form.Item label="Last Name" name="lastName">
             <Input
               placeholder="e.g. Doe"
+              style={{ borderRadius: '8px' }}
+              className="hover:border-blue-400 transition-all duration-300"
             />
           </Form.Item>
 
-          <Form.Item 
-            label="Email" 
+          <Form.Item
+            label="Email"
             name="email"
-            rules = {[
-                {required: true, message: 'Please input your email!'},
-                {type: 'email',message: 'The input is not valid E-mail!'}
+            rules={[
+              { required: true, message: 'Please input the email!' },
+              { type: 'email', message: 'Please enter a valid email address!' },
             ]}
-            >
-            <Input placeholder="e.g. john.doe@example.com" />
+          >
+            <Input
+              placeholder="e.g. john.doe@example.com"
+              style={{ borderRadius: '8px' }}
+              className="hover:border-blue-400 transition-all duration-300"
+            />
           </Form.Item>
 
-          <Form.Item style={{ textAlign: "right" }}>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Save Audience Member
+          <Form.Item style={{ textAlign: 'right' }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              style={{
+                borderRadius: '8px',
+                background: 'linear-gradient(45deg, #3b82f6, #60a5fa)',
+                border: 'none',
+                padding: '0 24px',
+                height: '40px',
+                transition: 'all 0.3s',
+              }}
+              className="hover:scale-105 hover:shadow-lg"
+            >
+              Save Audience Member 🎉
             </Button>
           </Form.Item>
         </Form>
       </div>
     </Card>
   );
-};
-
-export default CreateAudienceMember;
+}
