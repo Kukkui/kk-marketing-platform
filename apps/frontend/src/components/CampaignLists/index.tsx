@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
-import { Table, Button, Space, Popconfirm, message, Typography, Card, Input } from 'antd';
+import { Table, Button, Space, Popconfirm, message, Typography, Card, Input, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
 import dayjs from 'dayjs';
+import CampaignForm from '../CampaignForm';
 
 const { Title } = Typography;
 
@@ -19,8 +20,11 @@ interface Campaign {
 
 const CampaignListsPage: React.FC = () => {
   const [data, setData] = useState<Campaign[]>([]);
+  const [filteredData, setFilteredData] = useState<Campaign[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const isFetchCampaignSuccess = useRef("");
 
   // Show success or error message after fetching campaigns
@@ -43,12 +47,12 @@ const CampaignListsPage: React.FC = () => {
           created_at: dayjs(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
         }));
         setData(formattedData);
-        isFetchCampaignSuccess.current = "success"; // TODO: ENUM
+        setFilteredData(formattedData);
+        isFetchCampaignSuccess.current = "success";
       } catch (error) {
         const axiosError = error as AxiosError;
         console.error('Error fetching campaign data:', axiosError);
-        isFetchCampaignSuccess.current = "failed"; // TODO: ENUM
-        // Fallback mock data
+        isFetchCampaignSuccess.current = "failed";
       } finally {
         setLoading(false);
       }
@@ -58,8 +62,9 @@ const CampaignListsPage: React.FC = () => {
 
   const handleDelete = async (id: string): Promise<void> => {
     try {
-      await axios.delete(`${API_URL}/api/campaign/${id}`);
+      await axios.delete(`${API_URL}/campaign/${id}`);
       setData((prev) => prev.filter((item) => item.id !== id));
+      setFilteredData((prev) => prev.filter((item) => item.id !== id));
       message.success('Campaign deleted successfully! 🎉');
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -68,22 +73,21 @@ const CampaignListsPage: React.FC = () => {
   };
 
   const handleEdit = (record: Campaign): void => {
-    message.info(`Edit campaign: ${record.campaign_name}`);
-    // Implement edit logic (e.g., redirect or open modal)
+    setSelectedCampaign(record);
+    setEditModalVisible(true);
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const value = e.target.value.toLowerCase();
     setSearchText(value);
-    setData((prev) =>
-      prev.filter(
-        (item) =>
-          item.campaign_name.toLowerCase().includes(value) ||
-          item.subject_line.toLowerCase().includes(value) ||
-          item.email_content.toLowerCase().includes(value) ||
-          item.created_at.toLowerCase().includes(value)
-      )
+    const filtered = data.filter(
+      (item) =>
+        item.campaign_name.toLowerCase().includes(value) ||
+        item.subject_line.toLowerCase().includes(value) ||
+        item.email_content.toLowerCase().includes(value) ||
+        item.created_at.toLowerCase().includes(value)
     );
+    setFilteredData(filtered);
   };
 
   const columns = [
@@ -190,7 +194,7 @@ const CampaignListsPage: React.FC = () => {
         />
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           loading={loading}
           pagination={{
             pageSize: 5,
@@ -200,6 +204,47 @@ const CampaignListsPage: React.FC = () => {
           rowClassName="hover:bg-blue-50 transition-all duration-300"
           style={{ borderRadius: '8px', overflow: 'hidden' }}
         />
+        <Modal
+          title={
+            <span style={{ color: '#1e40af', fontWeight: 'bold' }}>
+              Edit Campaign 📢
+            </span>
+          }
+          open={editModalVisible}
+          onCancel={() => {
+            setEditModalVisible(false);
+            setSelectedCampaign(null);
+          }}
+          footer={null}
+          style={{ top: 20 }}
+          width={800}
+        >
+          {selectedCampaign && (
+            <CampaignForm
+              initialData={{
+                id: selectedCampaign.id,
+                campaignName: selectedCampaign.campaign_name,
+                subjectLine: selectedCampaign.subject_line,
+                emailContent: selectedCampaign.email_content,
+              }}
+              onCancel={async () => {
+                // Refresh data after edit
+                const response = await axios.get<Record<string, Campaign[]>>(`${API_URL}/campaign`);
+                const formattedData = response.data.data.map((item) => ({
+                  id: item.id.toString(),
+                  campaign_name: item.campaign_name,
+                  subject_line: item.subject_line,
+                  email_content: item.email_content,
+                  created_at: dayjs(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
+                }));
+                setData(formattedData);
+                setFilteredData(formattedData);
+                setEditModalVisible(false);
+                setSelectedCampaign(null);
+              }}
+            />
+          )}
+        </Modal>
       </div>
     </Card>
   );

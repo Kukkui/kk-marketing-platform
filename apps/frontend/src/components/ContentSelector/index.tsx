@@ -5,6 +5,7 @@ import AudienceEmailListsPage from "../AudienceLists";
 import CreateAudienceMember from "../AudienceCreation";
 import AutomationForm from "../AutomationCreation";
 import AutomationListsPage from "../AutomationLists";
+import AutomationCreation from "../AutomationCreation";
 
 const ContentSelector = (props: { menu: string }) => {
     const { menu } = props;
@@ -28,7 +29,7 @@ const ContentSelector = (props: { menu: string }) => {
                 return <AutomationListsPage />;
             case 'create_automation':
                 // return 'Create Automation';
-                return <AutomationForm />;
+                return <AutomationCreation />;
             default:
                 return 'PLEASE SELECT A MENU';
         }

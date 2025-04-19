@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
-import { Table, Button, Space, Popconfirm, message, Typography, Card, Input } from 'antd';
+import { Table, Button, Space, Popconfirm, message, Typography, Card, Input, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
+import AudienceForm from '../AudienceForm';
 
 const { Title } = Typography;
 
@@ -18,8 +19,11 @@ interface Audience {
 
 export default function AudienceEmailListsPage() {
   const [data, setData] = useState<Audience[]>([]);
+  const [filteredData, setFilteredData] = useState<Audience[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
+  const [selectedAudience, setSelectedAudience] = useState<Audience | null>(null);
   const isFetchAudienceSuccess = useRef("");
 
   // Check if the audience data has been fetched successfully
@@ -27,12 +31,11 @@ export default function AudienceEmailListsPage() {
     if (isFetchAudienceSuccess.current === "success") message.success('Audiences fetched successfully! 🎉');
     if (isFetchAudienceSuccess.current === "failed") message.error('Failed to fetch audience data. Please try again later.');
   }, [isFetchAudienceSuccess.current]);
-  
+
   // Fetch all audiences from API
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-
       try {
         const response = await axios.get<Record<string, Audience[]>>(`${API_URL}/audience`);
         const formattedData = response.data.data.map((item) => ({
@@ -42,15 +45,13 @@ export default function AudienceEmailListsPage() {
           last_name: item.last_name,
           email: item.email,
         }));
-
         setData(formattedData);
-        // message.success('Audiences fetched successfully! 🎉');
-        isFetchAudienceSuccess.current = "success"; // TODO: ENUM
+        setFilteredData(formattedData);
+        isFetchAudienceSuccess.current = "success";
       } catch (error) {
         const axiosError = error as AxiosError;
         console.error('Error fetching audience data:', axiosError);
-        
-        isFetchAudienceSuccess.current = "failed"; // TODO: ENUM
+        isFetchAudienceSuccess.current = "failed";
       } finally {
         setLoading(false);
       }
@@ -62,6 +63,7 @@ export default function AudienceEmailListsPage() {
     try {
       await axios.delete(`${API_URL}/audience/${id}`);
       setData((prev) => prev.filter((item) => item.id !== id));
+      setFilteredData((prev) => prev.filter((item) => item.id !== id));
       message.success('Audience member deleted successfully! 🎉');
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -70,23 +72,21 @@ export default function AudienceEmailListsPage() {
   };
 
   const handleEdit = (record: Audience): void => {
-    message.info(`Edit audience member: ${record.name}`);
-    // Implement edit logic (e.g., open modal or redirect to edit page)
-    // Example: Could trigger a modal with a form to update via PUT request
+    setSelectedAudience(record);
+    setEditModalVisible(true);
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const value = e.target.value.toLowerCase();
     setSearchText(value);
-    setData((prev) =>
-      prev.filter(
-        (item) =>
-          item.name.toLowerCase().includes(value) ||
-          item.first_name.toLowerCase().includes(value) ||
-          item.last_name.toLowerCase().includes(value) ||
-          item.email.toLowerCase().includes(value)
-      )
+    const filtered = data.filter(
+      (item) =>
+        item.name.toLowerCase().includes(value) ||
+        item.first_name.toLowerCase().includes(value) ||
+        item.last_name.toLowerCase().includes(value) ||
+        item.email.toLowerCase().includes(value)
     );
+    setFilteredData(filtered);
   };
 
   const columns = [
@@ -183,7 +183,7 @@ export default function AudienceEmailListsPage() {
         />
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           loading={loading}
           pagination={{
             pageSize: 5,
@@ -193,9 +193,49 @@ export default function AudienceEmailListsPage() {
           rowClassName="hover:bg-blue-50 transition-all duration-300"
           style={{ borderRadius: '8px', overflow: 'hidden' }}
         />
+        <Modal
+          title={
+            <span style={{ color: '#1e40af', fontWeight: 'bold' }}>
+              Edit Audience Member 🚀
+            </span>
+          }
+          open={editModalVisible}
+          onCancel={() => {
+            setEditModalVisible(false);
+            setSelectedAudience(null);
+          }}
+          footer={null}
+          style={{ top: 20 }}
+          width={600}
+        >
+          {selectedAudience && (
+            <AudienceForm
+              initialData={{
+                id: selectedAudience.id,
+                name: selectedAudience.name,
+                firstName: selectedAudience.first_name,
+                lastName: selectedAudience.last_name,
+                email: selectedAudience.email,
+              }}
+              onCancel={async () => {
+                // Refresh data after edit
+                const response = await axios.get<Record<string, Audience[]>>(`${API_URL}/audience`);
+                const formattedData = response.data.data.map((item) => ({
+                  id: item.id.toString(),
+                  name: item.name,
+                  first_name: item.first_name,
+                  last_name: item.last_name,
+                  email: item.email,
+                }));
+                setData(formattedData);
+                setFilteredData(formattedData);
+                setEditModalVisible(false);
+                setSelectedAudience(null);
+              }}
+            />
+          )}
+        </Modal>
       </div>
     </Card>
   );
-};
-
-// export default AudienceEmailListsPage;
+}

@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm, message, Typography, Card, Input, Tag, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from 'axios';
-import AutomationForm, { AutomationFormValues } from '../AutomationCreation'; // Import AutomationFormValues
-import dayjs from 'dayjs';
+import AutomationForm from '../AutomationForm';
 
 const { Title } = Typography;
 
@@ -127,27 +126,27 @@ const AutomationListsPage: React.FC = () => {
     }
   };
 
-  const handleUpdateAutomation = async (values: AutomationFormValues & { id?: string }) => {
-    if (!values.id) return;
+  // const handleUpdateAutomation = async (values: AutomationFormValues & { id?: string }) => {
+  //   if (!values.id) return;
 
-    try {
-      const payload = {
-        name: values.name,
-        schedule: values?.schedule ? dayjs(values?.schedule).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') : "-",
-        campaign: values?.campaign,
-        audienceIds: values?.audiences,
-        status: values?.status,
-      };
-      await axios.put(`${API_URL}/automation/${values.id}`, payload);
-      await fetchData(); // Refresh the table data
+  //   try {
+  //     const payload = {
+  //       name: values.name,
+  //       schedule: values?.schedule ? dayjs(values?.schedule).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') : "-",
+  //       campaign: values?.campaign,
+  //       audienceIds: values?.audiences,
+  //       status: values?.status,
+  //     };
+  //     await axios.put(`${API_URL}/automation/${values.id}`, payload);
+  //     await fetchData(); // Refresh the table data
 
-      setEditModalVisible(false);
-      setSelectedAutomation(null);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      message.error(`Error updating automation: ${axiosError.message}`);
-    }
-  };
+  //     setEditModalVisible(false);
+  //     setSelectedAutomation(null);
+  //   } catch (error) {
+  //     const axiosError = error as AxiosError;
+  //     message.error(`Error updating automation: ${axiosError.message}`);
+  //   }
+  // };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -310,8 +309,8 @@ const AutomationListsPage: React.FC = () => {
           {selectedAutomation && (
             <AutomationForm
               initialData={selectedAutomation}
-              onSubmit={handleUpdateAutomation}
-              onCancel={() => {
+              onCancel={async () => {
+                await fetchData();
                 setEditModalVisible(false);
                 setSelectedAutomation(null);
               }}
