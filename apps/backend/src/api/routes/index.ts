@@ -3,7 +3,7 @@
  */
 
 import { Express } from 'express';
-// import { setupAudienceRoutes } from './audienceRoutes';
+import { setupAudienceRoutes } from './audienceRoutes';
 import { setupCampaignRoutes } from './campaignRoutes';
 
 /**
@@ -11,6 +11,6 @@ import { setupCampaignRoutes } from './campaignRoutes';
  * @param app - Express application instance.
  */
 export function setupRoutes(app: Express) {
-//   setupAudienceRoutes(app);
+  setupAudienceRoutes(app);
   setupCampaignRoutes(app);
 }
