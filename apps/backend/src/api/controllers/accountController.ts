@@ -30,9 +30,7 @@ export async function createAccountHandler(req: Request, res: Response) {
  * Authenticates a user.
  */
 export async function loginHandler(req: Request, res: Response) {
-  try {
-    console.log("loginHandler called");
-    
+  try {    
     const payload = LoginPayloadSchema.parse(req.body);
     const loginResponse: LoginResponse = await login(payload.email, payload.password);
     res.status(200).json(loginResponse);
