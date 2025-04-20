@@ -16,7 +16,7 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
+    "incremental": false,
     "plugins": [
       {
         "name": "next"
@@ -28,7 +28,7 @@
       ]
     },
     "types": [
-      "jest",
+      // "jest",
       "node"
     ],
     "outDir": "dist",
