@@ -10,6 +10,6 @@ import { getWelcomeMessage } from '../controllers/apiController';
  * Configures API routes.
  * @param app - Express application instance.
  */
-export function setupRoutes(app: Express) {
+export function setupSimpleRoutes(app: Express) {
   app.get('/api', getWelcomeMessage);
 }

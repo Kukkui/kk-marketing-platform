@@ -7,6 +7,7 @@ import { setupAudienceRoutes } from './audienceRoutes';
 import { setupCampaignRoutes } from './campaignRoutes';
 import { setupAutomationRoutes } from './automationRoutes';
 import { setupAccountRoutes } from './accountRoutes';
+import { setupSimpleRoutes } from './apiRoutes';
 
 /**
  * Sets up all API routes.
@@ -17,4 +18,5 @@ export function setupRoutes(app: Express) {
   setupAudienceRoutes(app);
   setupCampaignRoutes(app);
   setupAutomationRoutes(app);
+  setupSimpleRoutes(app);
 }
