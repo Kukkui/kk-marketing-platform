@@ -27,7 +27,7 @@ export default function LoginPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // TODO: Replace with actual API call
-      if (email === 'admin' && password === 'admin') {
+      if (email === 'admin@gmail.com' && password === 'admin') {
         // Store token in local storage
         localStorage.setItem('authToken', 'loggedIn');
         message.success('Login successful!');
