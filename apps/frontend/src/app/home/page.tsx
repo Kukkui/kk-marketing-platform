@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AppstoreOutlined, DesktopOutlined, PieChartOutlined, PlusOutlined, RobotOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
+import { DashboardOutlined, MailOutlined, PlusCircleOutlined, RobotOutlined, UnorderedListOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import SideBarMenu from '@/components/SidebarMenu';
 import ContentSelector from '@/components/ContentSelector';
@@ -10,55 +10,61 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 const items: MenuItem[] = [
   {
+    key: 'dashboard',
+    label: 'Dashboard',
+    icon: <DashboardOutlined />, // Better for dashboard
+  },
+  {
     key: 'campaign',
     label: 'Campaign',
-    icon: <AppstoreOutlined />,
+    icon: <MailOutlined />, // Mail for campaigns
     children: [
-      { key: 'campaign_list', icon: <DesktopOutlined />, label: 'Campaign Lists' },
-      { key: 'create_email_campaign', icon: <PieChartOutlined />, label: 'Create Email Campaign' },
+      {
+        key: 'campaign_list',
+        icon: <UnorderedListOutlined />,
+        label: 'Campaign Lists', // List icon
+      },
+      {
+        key: 'create_email_campaign',
+        icon: <PlusCircleOutlined />,
+        label: 'Create Email Campaign', // Creation icon
+      },
     ],
   },
   {
     key: 'audience',
     label: 'Audience',
-    icon: <TeamOutlined/>,
+    icon: <UsergroupAddOutlined />, // People icon for audience
     children: [
-      { key: 'audience_list', icon: <DesktopOutlined />, label: 'Audience Lists' },
-      { key: 'create_audience', icon: <PieChartOutlined />, label: 'Create Audiences' },
+      {
+        key: 'audience_list',
+        icon: <UnorderedListOutlined />,
+        label: 'Audience Lists',
+      },
+      {
+        key: 'create_audience',
+        icon: <PlusCircleOutlined />,
+        label: 'Create Audiences',
+      },
     ],
   },
   {
     key: 'automation',
     label: 'Automation',
-    icon: <RobotOutlined/>,
+    icon: <RobotOutlined />, // Robot icon for automation
     children: [
-      { key: 'automation_list', icon: <SettingOutlined />, label: 'Automation Lists' }, // SettingOutlined for a list/settings-like icon
-      { key: 'create_automation', icon: <PlusOutlined />, label: 'Create Automation' }, // PlusOutlined for creation
+      {
+        key: 'automation_list',
+        icon: <UnorderedListOutlined />,
+        label: 'Automation Lists',
+      },
+      {
+        key: 'create_automation',
+        icon: <PlusCircleOutlined />,
+        label: 'Create Automation',
+      },
     ],
-  }
-  // {
-  //   type: 'divider',
-  // },
-  // {
-  //   key: 'sub4',
-  //   label: 'Navigation Three',
-  //   icon: <SettingOutlined />,
-  //   children: [
-  //     { key: '9', label: 'Option 9' },
-  //     { key: '10', label: 'Option 10' },
-  //     { key: '11', label: 'Option 11' },
-  //     { key: '12', label: 'Option 12' },
-  //   ],
-  // },
-  // {
-  //   key: 'grp',
-  //   label: 'Group',
-  //   type: 'group',
-  //   children: [
-  //     { key: '13', label: 'Option 13' },
-  //     { key: '14', label: 'Option 14' },
-  //   ],
-  // },
+  },
 ];
 
 const App: React.FC = () => {
