@@ -5,32 +5,29 @@ import AudienceEmailListsPage from "../AudienceLists";
 import CreateAudienceMember from "../AudienceCreation";
 import AutomationListsPage from "../AutomationLists";
 import AutomationCreation from "../AutomationCreation";
+import Dashboard from "../Dashboard";
 
 const ContentSelector = (props: { menu: string }) => {
     const { menu } = props;
 
     const contentRenderer = useMemo(() => {
         switch (menu) {
+            case 'dashboard':
+                return <Dashboard />;
             case 'campaign_list':
-                // return 'Campaign List';
                 return <CampaignListsPage />;
             case 'create_email_campaign':
-                // return 'Create Campaign';
                 return <CreateCampaign />;
             case 'audience_list':
-                // return 'Audience List';
                 return <AudienceEmailListsPage />;
             case 'create_audience':
-                // return 'Create Audience';
                 return <CreateAudienceMember />;
             case 'automation_list':
-                // return 'Automation List';
                 return <AutomationListsPage />;
             case 'create_automation':
-                // return 'Create Automation';
                 return <AutomationCreation />;
             default:
-                return 'PLEASE SELECT A MENU';
+                return <Dashboard />;
         }
     }, [menu]);
     

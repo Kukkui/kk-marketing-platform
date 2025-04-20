@@ -27,12 +27,13 @@ export default function LoginPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // TODO: Replace with actual API call
-      if (email === 'test@gmail.com' && password === '123') {
+      if (email === 'admin' && password === 'admin') {
+        // Store token in local storage
+        localStorage.setItem('authToken', 'loggedIn');
         message.success('Login successful!');
         router.push('/home');
       } else {
         message.error('Invalid email or password.');
-
         form.setFields([
           {
             name: 'password',
@@ -42,7 +43,6 @@ export default function LoginPage() {
       }
     } catch (error: unknown) {
       message.error('Login failed.');
-
       console.error('Login error:', error);
     } finally {
       setLoading(false);
@@ -58,12 +58,14 @@ export default function LoginPage() {
         <Title level={3} style={{ textAlign: 'center', marginBottom: 24 }}>
           LOGIN
         </Title>
-        {/* NOTED: THIS WRAP WILL DIM THE CONTENT INSIDE Spin IF TRUE */}
         <Spin spinning={loading}>
           <Form form={form} name="login" onFinish={onFinish} layout="vertical">
             <Form.Item
-              name = "email"
-              rules = {[{required: true, message: 'Please input your email!'},{type: 'email',message: 'The input is not valid E-mail!'}]}
+              name="email"
+              rules={[
+                { required: true, message: 'Please input your email!' },
+                { type: 'email', message: 'The input is not valid E-mail!' },
+              ]}
             >
               <Input
                 prefix={<UserOutlined />}
@@ -73,8 +75,8 @@ export default function LoginPage() {
             </Form.Item>
 
             <Form.Item
-              name = "password"
-              rules = {[{required: true, message: 'Please enter password!'}]}
+              name="password"
+              rules={[{ required: true, message: 'Please enter password!' }]}
             >
               <Input
                 prefix={<LockOutlined />}
