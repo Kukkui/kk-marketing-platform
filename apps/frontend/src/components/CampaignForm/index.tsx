@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { Input, Button, Form, message, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import axios, { AxiosError } from 'axios';
-import 'react-quill/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css';
 
-const ReactQuill = dynamic(() => import('react-quill'), {
+const ReactQuill = dynamic(() => import('react-quill-new'), {
   ssr: false,
   loading: () => <p>Loading editor...</p>,
 });
