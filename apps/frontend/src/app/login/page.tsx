@@ -5,6 +5,7 @@ import { Button, Form, Input, Typography, Card, Spin, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const { Title } = Typography;
 
@@ -27,19 +28,49 @@ export default function LoginPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // TODO: Replace with actual API call
-      if (email === 'admin@gmail.com' && password === 'admin') {
-        // Store token in local storage
-        localStorage.setItem('authToken', 'loggedIn');
-        message.success('Login successful!');
-        router.push('/home');
-      } else {
-        message.error('Invalid email or password.');
-        form.setFields([
-          {
-            name: 'password',
-            value: '',
-          },
-        ]);
+      try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/account/login`, {
+          email,
+          password,
+        });
+
+        if (response.data.status === "success") {
+          // Store token in local storage
+          localStorage.setItem('authToken', "mockAuthToken");
+
+          message.success('Login successful!');
+          
+          router.push('/home');
+        } else {
+          message.error('Invalid email or password.');
+
+          form.setFields([
+            {
+              name: 'email',
+              value: '',
+            },
+            {
+              name: 'password',
+              value: '',
+            },
+          ]);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          message.error('Invalid email or password.');
+          form.setFields([
+            {
+              name: 'email',
+              value: '',
+            },
+            {
+              name: 'password',
+              value: '',
+            },
+          ]);
+        } else {
+          message.error('An unexpected error occurred.');
+        }
       }
     } catch (error: unknown) {
       message.error('Login failed.');

@@ -6,12 +6,14 @@ import { Express } from 'express';
 import { setupAudienceRoutes } from './audienceRoutes';
 import { setupCampaignRoutes } from './campaignRoutes';
 import { setupAutomationRoutes } from './automationRoutes';
+import { setupAccountRoutes } from './accountRoutes';
 
 /**
  * Sets up all API routes.
  * @param app - Express application instance.
  */
 export function setupRoutes(app: Express) {
+  setupAccountRoutes(app);
   setupAudienceRoutes(app);
   setupCampaignRoutes(app);
   setupAutomationRoutes(app);
