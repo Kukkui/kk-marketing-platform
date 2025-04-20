@@ -1,20 +1,8 @@
-// const CampaignListsPage: React.FC = () => {
-//   return (
-//     <div className="flex flex-col h-full">
-//       HOME
-//     </div>
-//   );
-// }
-
-// export default CampaignListsPage;
-
 'use client';
 
 import React, { useState } from 'react';
-import { AppstoreOutlined, ContainerOutlined, DashboardOutlined, DesktopOutlined, MailOutlined, PieChartOutlined, PlusOutlined, RobotOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, DesktopOutlined, PieChartOutlined, PlusOutlined, RobotOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Menu } from 'antd';
-import Image from 'next/image';
 import SideBarMenu from '@/components/SidebarMenu';
 import ContentSelector from '@/components/ContentSelector';
 

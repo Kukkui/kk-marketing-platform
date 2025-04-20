@@ -40,7 +40,7 @@ interface DisplayAutomation {
 const AutomationListsPage: React.FC = () => {
   const [data, setData] = useState<DisplayAutomation[]>([]);
   const [filteredData, setFilteredData] = useState<DisplayAutomation[]>([]);
-  const [searchText, setSearchText] = useState('');
+  const [, setSearchText] = useState('');
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [audiences, setAudiences] = useState<Audience[]>([]);
   const [editModalVisible, setEditModalVisible] = useState(false);

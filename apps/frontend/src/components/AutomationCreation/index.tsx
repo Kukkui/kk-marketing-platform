@@ -1,26 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Button, Form, Input, Select, DatePicker, List, Space, message, Card, Typography } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import dayjs, { Dayjs } from 'dayjs';
-import axios, { AxiosError } from 'axios';
+import { Card, Typography } from 'antd';
+import { Dayjs } from 'dayjs';
 import AutomationForm from '../AutomationForm';
 
 const { Title } = Typography;
-
-const { Option } = Select;
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-interface Campaign {
-  id: number;
-  campaign_name: string;
-}
-
-interface Audience {
-  id: number;
-  email: string;
-}
-
 export interface AutomationFormValues {
   name: string;
   schedule: Dayjs | null;

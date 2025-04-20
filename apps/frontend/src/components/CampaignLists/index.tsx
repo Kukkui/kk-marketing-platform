@@ -21,7 +21,7 @@ interface Campaign {
 const CampaignListsPage: React.FC = () => {
   const [data, setData] = useState<Campaign[]>([]);
   const [filteredData, setFilteredData] = useState<Campaign[]>([]);
-  const [searchText, setSearchText] = useState<string>('');
+  const [, setSearchText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);

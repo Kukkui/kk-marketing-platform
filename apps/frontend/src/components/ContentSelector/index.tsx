@@ -3,7 +3,6 @@ import CreateCampaign from "../CampaignCreation";
 import CampaignListsPage from "../CampaignLists";
 import AudienceEmailListsPage from "../AudienceLists";
 import CreateAudienceMember from "../AudienceCreation";
-import AutomationForm from "../AutomationCreation";
 import AutomationListsPage from "../AutomationLists";
 import AutomationCreation from "../AutomationCreation";
 

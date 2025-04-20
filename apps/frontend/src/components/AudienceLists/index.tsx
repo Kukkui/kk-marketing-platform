@@ -20,7 +20,7 @@ interface Audience {
 export default function AudienceEmailListsPage() {
   const [data, setData] = useState<Audience[]>([]);
   const [filteredData, setFilteredData] = useState<Audience[]>([]);
-  const [searchText, setSearchText] = useState<string>('');
+  const [, setSearchText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [selectedAudience, setSelectedAudience] = useState<Audience | null>(null);
