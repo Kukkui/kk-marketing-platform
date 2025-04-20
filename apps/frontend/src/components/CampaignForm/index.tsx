@@ -111,6 +111,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ initialData, onCancel }) =>
       >
         <ReactQuill
           placeholder="Compose your email content here..."
+          style={{ backgroundColor: 'white', borderRadius: '8px' }}
           modules={{
             toolbar: [
               [{ header: [1, 2, 3, false] }],
