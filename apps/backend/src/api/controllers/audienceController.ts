@@ -5,16 +5,25 @@
 
 import { Request, Response } from 'express';
 import { createAudience, getAllAudiences, getAudienceById, updateAudience, deleteAudience } from '../service/audienceService';
-import { AudiencePayload, AudienceResponse } from '../../shared/types/audienceTypes';
+import { AudiencePayloadSchema } from '../../schema/audienceSchemas';
+import { AudienceResponse } from '../../shared/types/audienceTypes';
+import { z } from 'zod';
 
 /**
  * Creates a new audience.
  */
 export async function createAudienceHandler(req: Request, res: Response) {
-  const payload: AudiencePayload = req.body;
-  const audience = await createAudience(payload);
-  const response: AudienceResponse = { data: audience, message: 'Audience created successfully' };
-  res.status(201).json(response);
+  try {
+    const payload = AudiencePayloadSchema.parse(req.body);
+    const audience = await createAudience(payload);
+    const response: AudienceResponse = { data: audience, message: 'Audience created successfully' };
+    res.status(201).json(response);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation failed', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
 
 /**
@@ -36,7 +45,6 @@ export async function getAudienceByIdHandler(req: Request, res: Response) {
     return res.status(404).json({ message: 'Audience not found' });
   }
   const response: AudienceResponse = { data: audience };
-  
   return res.status(200).json(response);
 }
 
@@ -44,26 +52,31 @@ export async function getAudienceByIdHandler(req: Request, res: Response) {
  * Updates an audience by ID.
  */
 export async function updateAudienceHandler(req: Request, res: Response) {
-  const { id } = req.params;
-  const payload: AudiencePayload = req.body;
-  const updatedAudience = await updateAudience(Number(id), payload);
-  if (!updatedAudience) {
-    return res.status(404).json({ message: 'Audience not found' });
+  try {
+    const { id } = req.params;
+    const payload = AudiencePayloadSchema.parse(req.body);
+    const updatedAudience = await updateAudience(Number(id), payload);
+    if (!updatedAudience) {
+      return res.status(404).json({ message: 'Audience not found' });
+    }
+    const response: AudienceResponse = { data: updatedAudience, message: 'Audience updated successfully' };
+    return res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation failed', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Internal server error' });
   }
-  const response: AudienceResponse = { data: updatedAudience, message: 'Audience updated successfully' };
-  
-  return res.status(200).json(response);
 }
 
 /**
  * Deletes an audience by ID.
  */
-export function deleteAudienceHandler(req: Request, res: Response) {
+export async function deleteAudienceHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const deleted = deleteAudience(Number(id));
+  const deleted = await deleteAudience(Number(id));
   if (!deleted) {
     return res.status(404).json({ message: 'Audience not found' });
   }
-
   return res.status(204).send();
 }

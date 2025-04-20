@@ -6,20 +6,29 @@
 import dayjs from 'dayjs';
 import { Request, Response } from 'express';
 import { createAutomation, getAllAutomations, getAutomationById, updateAutomation, deleteAutomation } from '../service/automationService';
-import { AutomationPayload, AutomationResponse } from '../../shared/types/automationTypes';
+import { AutomationPayloadSchema } from '../../schema/automationSchemas';
+import { AutomationResponse } from '../../shared/types/automationTypes';
+import { z } from 'zod';
 
 /**
  * Creates a new automation.
  */
 export async function createAutomationHandler(req: Request, res: Response) {
-  const payload: Omit<AutomationPayload, 'schedule'> & { schedule: string | null } = req.body;
-  const formattedPayload: AutomationPayload = {
-    ...payload,
-    schedule: payload.schedule ? dayjs(payload.schedule) : null,
-  };
-  const automation = await createAutomation(formattedPayload);
-  const response: AutomationResponse = { data: automation, message: 'Automation created successfully' };
-  res.status(201).json(response);
+  try {
+    const payload = AutomationPayloadSchema.parse(req.body);
+    const formattedPayload = {
+      ...payload,
+      schedule: payload.schedule ? dayjs(payload.schedule) : null,
+    };
+    const automation = await createAutomation(formattedPayload);
+    const response: AutomationResponse = { data: automation, message: 'Automation created successfully' };
+    res.status(201).json(response);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation failed', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
 
 /**
@@ -36,32 +45,37 @@ export async function getAllAutomationsHandler(req: Request, res: Response) {
  */
 export async function getAutomationByIdHandler(req: Request, res: Response) {
   const { id } = req.params;
-  const automation = await getAutomationById((id));
+  const automation = await getAutomationById(id);
   if (!automation) {
     return res.status(404).json({ message: 'Automation not found' });
   }
   const response: AutomationResponse = { data: automation };
-  
-  return res.status(200).json(response);;
+  return res.status(200).json(response);
 }
 
 /**
  * Updates an automation by ID.
  */
 export async function updateAutomationHandler(req: Request, res: Response) {
-  const { id } = req.params;
-  const payload: Omit<AutomationPayload, 'schedule'> & { schedule: string | null } = req.body;
-  const formattedPayload: AutomationPayload = {
-    ...payload,
-    schedule: payload.schedule ? dayjs(payload.schedule) : null,
-  };
-  const updatedAutomation = await updateAutomation(id, formattedPayload);
-  if (!updatedAutomation) {
-    return res.status(404).json({ message: 'Automation not found' });
+  try {
+    const { id } = req.params;
+    const payload = AutomationPayloadSchema.parse(req.body);
+    const formattedPayload = {
+      ...payload,
+      schedule: payload.schedule ? dayjs(payload.schedule) : null,
+    };
+    const updatedAutomation = await updateAutomation(id, formattedPayload);
+    if (!updatedAutomation) {
+      return res.status(404).json({ message: 'Automation not found' });
+    }
+    const response: AutomationResponse = { data: updatedAutomation, message: 'Automation updated successfully' };
+    return res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation failed', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Internal server error' });
   }
-  const response: AutomationResponse = { data: updatedAutomation, message: 'Automation updated successfully' };
-
-  return res.status(200).json(response);
 }
 
 /**
@@ -73,6 +87,5 @@ export async function deleteAutomationHandler(req: Request, res: Response) {
   if (!deleted) {
     return res.status(404).json({ message: 'Automation not found' });
   }
-  
   return res.status(204).send();
 }
