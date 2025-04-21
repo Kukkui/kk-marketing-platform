@@ -12,22 +12,22 @@ const items: MenuItem[] = [
   {
     key: 'dashboard',
     label: 'Dashboard',
-    icon: <DashboardOutlined />, // Better for dashboard
+    icon: <DashboardOutlined />, // Better for dashboard.
   },
   {
     key: 'campaign',
     label: 'Campaign',
-    icon: <MailOutlined />, // Mail for campaigns
+    icon: <MailOutlined />, // Mail for campaigns.
     children: [
       {
         key: 'campaign_list',
         icon: <UnorderedListOutlined />,
-        label: 'Campaign Lists', // List icon
+        label: 'Campaign Lists', // List icon.
       },
       {
         key: 'create_email_campaign',
         icon: <PlusCircleOutlined />,
-        label: 'Create Email Campaign', // Creation icon
+        label: 'Create Email Campaign', // Creation icon.
       },
     ],
   },
