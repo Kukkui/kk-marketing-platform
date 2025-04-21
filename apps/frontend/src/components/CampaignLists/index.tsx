@@ -37,7 +37,7 @@ const CampaignListsPage: React.FC = () => {
           subject_line: item.subject_line,
           email_content: item.email_content,
           created_at: dayjs(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
-        }));
+        })).sort((a, b) => a.campaign_name.localeCompare(b.campaign_name));
         setData(formattedData);
         setFilteredData(formattedData);
       } catch (error) {
@@ -53,8 +53,8 @@ const CampaignListsPage: React.FC = () => {
   const handleDelete = async (id: string): Promise<void> => {
     try {
       await axios.delete(`${API_URL}/campaign/${id}`);
-      setData((prev) => prev.filter((item) => item.id !== id));
-      setFilteredData((prev) => prev.filter((item) => item.id !== id));
+      setData((prev) => prev.filter((item) => item.id !== id).sort((a, b) => a.campaign_name.localeCompare(b.campaign_name)));
+      setFilteredData((prev) => prev.filter((item) => item.id !== id).sort((a, b) => a.campaign_name.localeCompare(b.campaign_name)));
       message.success('Campaign deleted successfully! 🎉');
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -76,7 +76,7 @@ const CampaignListsPage: React.FC = () => {
         item.subject_line.toLowerCase().includes(value) ||
         item.email_content.toLowerCase().includes(value) ||
         item.created_at.toLowerCase().includes(value)
-    );
+    ).sort((a, b) => a.campaign_name.localeCompare(b.campaign_name));
     setFilteredData(filtered);
   };
 
@@ -226,7 +226,7 @@ const CampaignListsPage: React.FC = () => {
                   subject_line: item.subject_line,
                   email_content: item.email_content,
                   created_at: dayjs(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
-                }));
+                })).sort((a, b) => a.campaign_name.localeCompare(b.campaign_name));
                 setData(formattedData);
                 setFilteredData(formattedData);
                 setEditModalVisible(false);

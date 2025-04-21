@@ -36,7 +36,8 @@ export default function AudienceEmailListsPage() {
           first_name: item.first_name,
           last_name: item.last_name,
           email: item.email,
-        }));
+        })).sort((a, b) => a.name.localeCompare(b.name));
+        
         setData(formattedData);
         setFilteredData(formattedData);
       } catch (error) {
@@ -52,8 +53,8 @@ export default function AudienceEmailListsPage() {
   const handleDelete = async (id: string): Promise<void> => {
     try {
       await axios.delete(`${API_URL}/audience/${id}`);
-      setData((prev) => prev.filter((item) => item.id !== id));
-      setFilteredData((prev) => prev.filter((item) => item.id !== id));
+      setData((prev) => prev.filter((item) => item.id !== id).sort((a, b) => a.name.localeCompare(b.name)));
+      setFilteredData((prev) => prev.filter((item) => item.id !== id).sort((a, b) => a.name.localeCompare(b.name)));
       message.success('Audience member deleted successfully! 🎉');
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -75,7 +76,7 @@ export default function AudienceEmailListsPage() {
         item.first_name.toLowerCase().includes(value) ||
         item.last_name.toLowerCase().includes(value) ||
         item.email.toLowerCase().includes(value)
-    );
+    ).sort((a, b) => a.name.localeCompare(b.name));
     setFilteredData(filtered);
   };
 
@@ -216,7 +217,7 @@ export default function AudienceEmailListsPage() {
                   first_name: item.first_name,
                   last_name: item.last_name,
                   email: item.email,
-                }));
+                })).sort((a, b) => a.name.localeCompare(b.name));
                 setData(formattedData);
                 setFilteredData(formattedData);
                 setEditModalVisible(false);
